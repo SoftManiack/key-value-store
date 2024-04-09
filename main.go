@@ -55,6 +55,8 @@ func keyValueGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logger.WritePut(key, value)
+
 	w.Write([]byte(value))
 }
 
@@ -69,6 +71,8 @@ func keyValueDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logger.WriteDelete(key)
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -79,6 +83,8 @@ func main() {
 	r.HandleFunc("/v1/{key}", keyValuePutHandler).Methods("PUT")
 	r.HandleFunc("/v1/{key}", keyValueGetHandler).Methods("GET")
 	r.HandleFunc("/v1/{key}", keyValueDeleteHandler).Methods("DELETE")
+
+	initializeTransactionLog()
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
